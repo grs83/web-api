@@ -1,21 +1,31 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
-const app = express();
 const bodyParser = require('body-parser');
 
-app.use(bodyParser.json());
-app.post('/note', (req, res) => {
-  MongoClient.connect('mongodb://localhost/library', (err, client) => {
-    if (err) {
-      console.log(err);
-      res.sendStatus(500);
-      process.exit(1);
-    }
-    const db = client.db('library');
-    const books = db.collection('books');
+const app = express();
+const jsonParser = bodyParser.json();
 
+MongoClient.connect('mongodb://localhost/library', (err, client) => {
+  if (err) {
+    console.log(err);
+    res.sendStatus(500);
+    process.exit(1);
+  }
+  const db = client.db('library');
+  const books = db.collection('books');
+
+  app.get('/note', (req, res) => {
+    books
+      .find()
+      .toArray()
+      .then(results => res.send(results))
+      .catch(() => res.sendStatus(500));
+  });
+
+  app.use(jsonParser);
+
+  app.post('/note', (req, res) => {
     books.insertOne(req.body);
-
     res.sendStatus(201);
   });
 });
