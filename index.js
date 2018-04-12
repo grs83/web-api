@@ -18,7 +18,6 @@ app.post('/note', (req, res) => {
 
     res.sendStatus(201);
   });
-  console.log(req.body);
 });
 
 app.listen(3000, () => {
