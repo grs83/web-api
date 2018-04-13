@@ -28,6 +28,26 @@ MongoClient.connect('mongodb://localhost/library', (err, client) => {
     books.insertOne(req.body);
     res.sendStatus(201);
   });
+
+  app.put('/note', (req, res) => {
+    books
+      .findOneAndUpdate(
+        { title: req.body.find },
+        {
+          $set: {
+            title: req.body.title
+          }
+        }
+      )
+      .then(result => {
+        if (result.lastErrorObject.updatedExisting) {
+          res.sendStatus(201);
+        } else {
+          res.sendStatus(204);
+        }
+      })
+      .catch(() => res.sendStatus(500));
+  });
 });
 
 app.listen(3000, () => {
