@@ -28,6 +28,7 @@ MongoClient.connect('mongodb://localhost/library', (err, client) => {
     books.insertOne(req.body);
     res.sendStatus(201);
   });
+  3;
 
   app.put('/note', (req, res) => {
     books
@@ -42,6 +43,19 @@ MongoClient.connect('mongodb://localhost/library', (err, client) => {
       .then(result => {
         if (result.lastErrorObject.updatedExisting) {
           res.sendStatus(201);
+        } else {
+          res.sendStatus(204);
+        }
+      })
+      .catch(() => res.sendStatus(500));
+  });
+
+  app.delete('/note', (req, res) => {
+    books
+      .findOneAndDelete({ title: req.body.title })
+      .then(result => {
+        if (result.lastErrorObject.n === 1) {
+          res.sendStatus(200);
         } else {
           res.sendStatus(204);
         }
